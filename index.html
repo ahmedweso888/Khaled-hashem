@@ -4,84 +4,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة هاشم التاريخية | مستر خالد هاشم</title>
+    
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
+
     <style>
-        :root { --primary: #cda250; --dark: #1a1a1a; --light: #f4f4f4; --white: #ffffff; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--light); color: var(--dark); }
-        header { background-color: var(--dark); color: var(--white); padding: 20px; text-align: center; border-bottom: 3px solid var(--primary); }
-        header h1 { color: var(--primary); margin-bottom: 5px; }
-        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; margin-bottom: 100px; }
-        h2 { margin: 30px 0 15px 0; color: var(--dark); border-right: 4px solid var(--primary); padding-right: 10px; }
-        .timeline { position: relative; border-right: 3px solid var(--primary); margin: 20px 10px; padding: 10px 0; }
-        .timeline-item { position: relative; margin-bottom: 30px; padding-right: 30px; cursor: pointer; }
-        .timeline-item::before { content: ''; position: absolute; right: -9px; top: 5px; background: var(--dark); border: 3px solid var(--primary); width: 15px; height: 15px; border-radius: 50%; }
-        .timeline-content { background: var(--white); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .timeline-date { font-weight: bold; color: var(--primary); }
-        .details { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc; color: #555; }
-        #chat-widget { position: fixed; bottom: 20px; left: 20px; width: 350px; background: var(--white); border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); border: 2px solid var(--primary); display: flex; flex-direction: column; z-index: 1000; overflow: hidden; font-size: 14px; }
-        .chat-header { background: var(--dark); color: var(--primary); padding: 15px; font-weight: bold; }
+        :root {
+            --primary: #cda250;
+            --dark: #0a0a0a;
+            --white: #ffffff;
+            --ruqaa: 'Aref Ruqaa', serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background: #000; }
+
+        /* 🎬 شاشة الافتتاحية السحرية بأسلوب الآيفون */
+        #intro-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000000; z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; perspective: 1000px;
+        }
+        .svg-container {
+            width: 500px; max-width: 90%; height: auto; transform-style: preserve-3d;
+            animation: rotate3D 2.5s cubic-bezier(0.4, 0, 0.2, 1) 3s forwards, goldGlow 2s ease-in-out 4.5s infinite alternate;
+        }
+        .svg-container svg path {
+            fill: none; stroke: var(--primary); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+            stroke-dasharray: 1000; stroke-dashoffset: 1000;
+            animation: drawWord 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        .intro-sub { color: #666; font-size: 18px; margin-top: 25px; opacity: 0; animation: fadeInText 1s ease-out 2s forwards; }
+        .skip-btn {
+            margin-top: 45px; padding: 14px 40px; background: var(--primary); border: none; color: #000; font-weight: bold; border-radius: 30px;
+            cursor: pointer; font-size: 16px; opacity: 0; transform: translateY(20px); box-shadow: 0 4px 20px rgba(205, 162, 80, 0.3);
+            animation: fadeInButton 0.8s cubic-bezier(0.4, 0, 0.2, 1) 5s forwards;
+        }
+        @keyframes drawWord { to { stroke-dashoffset: 0; } }
+        @keyframes rotate3D { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
+        @keyframes goldGlow { 0% { filter: drop-shadow(0 0 5px rgba(205, 162, 80, 0.3)); } 100% { filter: drop-shadow(0 0 25px rgba(205, 162, 80, 0.9)); } }
+        @keyframes fadeInText { to { opacity: 1; } }
+        @keyframes fadeInButton { to { opacity: 1; transform: translateY(0); } }
+
+        /* 🗺️ عرض ويب سايت كانفا ملء الشاشة بالكامل */
+        .canva-web-frame {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: none; padding: 0; margin: 0; z-index: 1;
+        }
+
+        /* 🤖 نافذة شات بوت الجنرال العائمة */
+        #chat-widget { 
+            position: fixed; bottom: 20px; left: 20px; width: 350px; background: var(--white); 
+            border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.3); border: 2px solid var(--primary); 
+            display: flex; flex-direction: column; z-index: 1000; overflow: hidden; font-size: 14px; 
+        }
+        .chat-header { background: #0d0d0d; color: var(--primary); padding: 15px; font-weight: bold; font-family: var(--ruqaa); font-size: 18px; }
         .chat-body { height: 250px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f9f9f9; }
         .msg { padding: 10px 12px; border-radius: 8px; max-width: 80%; line-height: 1.4; }
         .msg.bot { background: #e9e9e9; align-self: flex-start; color: #333; }
         .msg.user { background: var(--primary); color: #000; align-self: flex-end; font-weight: 500; }
         .chat-footer { display: flex; border-top: 1px solid #ddd; padding: 10px; background: #fff; }
         .chat-footer input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; outline: none; }
-        .chat-footer button { background: var(--dark); color: var(--primary); border: none; padding: 0 15px; margin-right: 5px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .chat-footer button { background: #0d0d0d; color: var(--primary); border: none; padding: 0 15px; margin-right: 5px; border-radius: 4px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>منصة هاشم التاريخية 🏛️</h1>
-        <p>التاريخ ليس للحفظ.. التاريخ عقل يفكر ويحلل | مع الجنرال خالد هاشم</p>
-    </header>
-    <div class="container">
-        <h2>📍 خريطة الزمن التفاعلية</h2>
-        <div class="timeline">
-            <div class="timeline-item" onclick="toggleDetails('event1')">
-                <div class="timeline-content">
-                    <div class="timeline-date">عام 1798 م</div>
-                    <h3>الحملة الفرنسية على مصر</h3>
-                    <div id="event1" class="details">
-                        <p><strong>تحليل البكالوريا:</strong> نابليون جاء لضرب اقتصاد إنجلترا في الهند بطريقة غير مباشرة عبر مصر.</p>
-                    </div>
-                </div>
-            </div>
+
+    <!-- الافتتاحية السحرية "الجنرال" -->
+    <div id="intro-overlay">
+        <div class="svg-container">
+            <svg viewBox="0 0 450 150" width="100%" height="100%">
+                <path d="M 380,20 L 380,110" /><path d="M 350,20 L 350,105 L 310,105" />
+                <path d="M 320,60 C 290,55 270,75 290,95 L 260,95" /><path d="M 260,95 L 230,95 C 210,95 200,75 220,60" />
+                <path d="M 190,95 C 170,110 150,125 130,125" /><path d="M 120,20 L 120,105" /><path d="M 80,20 L 80,105 C 80,135 30,135 40,100" />
+                <path d="M 285,120 A 4,4 0 1,1 284.9,120" stroke-width="6" /><path d="M 222,45 A 4,4 0 1,1 221.9,45" stroke-width="6" />
+            </svg>
         </div>
+        <div class="intro-sub">تحت إشراف مستر خالد هاشم</div>
+        <button class="skip-btn" onclick="closeIntro()">المتابعة إلى المنصة 🏛️</button>
     </div>
+
+    <!-- 🌐 عرض ويب سايت كانفا الخاص بك برابط التضمين الصحيح -->
+    <iframe class="canva-web-frame" src="https://www.canva.com/design/DAHN0wLaH38/BYKBCS6cZNUCo4F0lfWTMA/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen"></iframe>
+
+    <!-- نافذة الشات بوت -->
     <div id="chat-widget">
-        <div class="chat-header">🤖 مساعد الجنرال (خالد هاشم)</div>
+        <div class="chat-header">🤖 مساعد الجنرال الذكي</div>
         <div class="chat-body" id="chat-body">
-            <div class="msg bot">مرحباً بك! أنا مساعد مستر خالد هاشم الذكي. اسألني عن المنهج (مثال: الحملة الفرنسية، محمد علي) وسأجيبك فوراً!</div>
+            <div class="msg bot">مرحباً بك! أنا مساعد مستر خالد هاشم الذكي. اسألني عن المنهج وسأجيبك فوراً!</div>
         </div>
         <div class="chat-footer">
             <input type="text" id="chat-input" placeholder="اكتب سؤالك هنا..." onkeypress="if(event.key === 'Enter') sendMessage()">
             <button onclick="sendMessage()">إرسال</button>
         </div>
     </div>
+
     <script>
-        function toggleDetails(id) { const el = document.getElementById(id); el.style.display = el.style.display === 'block' ? 'none' : 'block'; }
+        function closeIntro() {
+            const overlay = document.getElementById('intro-overlay');
+            overlay.style.transition = "opacity 0.5s ease"; overlay.style.opacity = 0;
+            setTimeout(() => overlay.style.display = 'none', 500);
+        }
         function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const query = input.value.trim();
-            if (!query) return;
-            appendMessage(query, 'user');
-            input.value = '';
-            fetch('/api/chatbot', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: query })
-            })
-            .then(res => res.json())
-            .then(data => appendMessage(data.reply, 'bot'))
-            .catch(() => appendMessage('حدث خطأ في الاتصال.', 'bot'));
+            const input = document.getElementById('chat-input'); const query = input.value.trim(); if (!query) return;
+            appendMessage(query, 'user'); input.value = '';
+            fetch('/api/chatbot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: query }) })
+            .then(res => res.json()).then(data => appendMessage(data.reply, 'bot'))
+            .catch(() => appendMessage('حدث خطأ في الاتصال بالسيرفر.', 'bot'));
         }
         function appendMessage(text, sender) {
-            const body = document.getElementById('chat-body');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'msg ' + sender;
-            msgDiv.innerHTML = text;
-            body.appendChild(msgDiv);
-            body.scrollTop = body.scrollHeight;
+            const body = document.getElementById('chat-body'); const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg ' + sender; msgDiv.innerHTML = text; body.appendChild(msgDiv); body.scrollTop = body.scrollHeight;
         }
     </script>
 </body>
