@@ -100,22 +100,31 @@
     </div>
 
     <script>
-        function closeIntro() {
-            const overlay = document.getElementById('intro-overlay');
-            overlay.style.transition = "opacity 0.5s ease"; overlay.style.opacity = 0;
-            setTimeout(() => overlay.style.display = 'none', 500);
+       function sendMessage() {
+    const input = document.getElementById('chat-input'); 
+    const query = input.value.trim(); 
+    if (!query) return;
+
+    appendMessage(query, 'user'); 
+    input.value = '';
+
+    // البوت سيرد هنا مباشرة دون الحاجة لسيرفر Node.js
+    setTimeout(() => {
+        let botReply = "أهلاً بك في منصة الجنرال. اسألني عن الحملة الفرنسية أو محمد علي.";
+        const q = query.toLowerCase();
+
+        if (q.includes('فرنسيه') || q.includes('فرنسية') || q.includes('نابليون')) {
+            botReply = "💡 **تحليل الجنرال للحملة الفرنسية:** نابليون جاء لضرب اقتصاد إنجلترا في الهند بطريقة غير مباشرة عبر مصر.";
+        } else if (q.includes('محمد علي') || q.includes('تولية')) {
+            botReply = "🏛️ **تحليل الجنرال لتولية محمد علي:** أول صك اجتماعي في تاريخ مصر الحديث باختيار الشعب عام 1805.";
+        } else if (q.includes('امتحان') || q.includes('بكالوريا')) {
+            botReply = "📝 نظام البكالوريا الجديد يعتمد على الفهم العميق والربط بين الأحداث، قفل المادة مع الجنرال!";
         }
-        function sendMessage() {
-            const input = document.getElementById('chat-input'); const query = input.value.trim(); if (!query) return;
-            appendMessage(query, 'user'); input.value = '';
-            fetch('/api/chatbot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: query }) })
-            .then(res => res.json()).then(data => appendMessage(data.reply, 'bot'))
-            .catch(() => appendMessage('حدث خطأ في الاتصال بالسيرفر.', 'bot'));
-        }
-        function appendMessage(text, sender) {
-            const body = document.getElementById('chat-body'); const msgDiv = document.createElement('div');
-            msgDiv.className = 'msg ' + sender; msgDiv.innerHTML = text; body.appendChild(msgDiv); body.scrollTop = body.scrollHeight;
-        }
+
+        appendMessage(botReply, 'bot');
+    }, 500);
+}
+
     </script>
 </body>
 </html>
